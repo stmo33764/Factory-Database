@@ -35,3 +35,31 @@ Note: 8-hour workday assumed as no shift duration was specified
 in the schema.
 
 ![udf2 Results](screenshots/udf2.png)
+### sp1 — Engineer Schedule Validation (Stored Procedure)
+
+Performs the same schedule validation as udf1 but implemented 
+as a stored procedure. Takes a machine ID and engineer ID as 
+inputs with the same default values, returning 
+YES or NO as a result set.
+
+![sp1 Results](screenshots/sp1.png)
+
+### Test Cases
+- `EXEC dbo.sp1 'm4', 'e02'` → YES
+- `EXEC dbo.sp1 'm1', 'e01'` → NO
+- `EXEC dbo.sp1 'm1'` → NO — EID defaults to e01
+- `EXEC dbo.sp1` → NO — both inputs use default values
+
+![udf2 Results](screenshots/udf2.png)
+
+### sp2 — Machine Cost Update with Audit Logging
+
+![sp2 Results](screenshots/sp2.png)
+
+The procedure enforces a 10% cost change limit, returning 1 
+for successful updates and -1 for invalid updates.
+
+![sp2 Log](screenshots/sp2_log.png)
+
+Every update attempt is logged to MachineCostLog regardless 
+of whether it was approved or rejected, supporting future auditing.
