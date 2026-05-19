@@ -63,3 +63,40 @@ for successful updates and -1 for invalid updates.
 
 Every update attempt is logged to MachineCostLog regardless 
 of whether it was approved or rejected, supporting future auditing.
+
+### trg1 — Component Color Validation
+
+Protects the Components table by enforcing two rules:
+1. No duplicate CID and color combinations are allowed
+2. New colors must be either already existing in the Components 
+   table or one of three approved new colors: pink, white, or yellow
+
+**trg1** fires on INSERT and UPDATE of the Components table.
+
+![trg1 Results](screenshots/trg1.png)
+
+![trg1 Components](screenshots/trg1_newadd.png)
+
+Test 1 confirms a valid new color is accepted. Test 2 
+confirms an existing color is still allowed. Test 3 
+confirms an invalid new color is rejected and rolled 
+back with an error message.
+
+### trg2 — Machine and Component Integrity (trg21 & trg22)
+
+Two triggers that enforce the rule that every machine in the 
+Machines table must have at least one component in KeyComponents.
+
+**trg21** fires on INSERT and UPDATE of the Machines table. 
+Prevents a new or modified machine from existing without at 
+least one associated component.
+
+**trg22** fires on DELETE and UPDATE of the KeyComponents table.
+Prevents removing or modifying a component if it is the only 
+one associated with its machine.
+
+![trg2 Results](screenshots/trg2.png)
+
+All three test cases intentionally attempt rule violations to 
+confirm both triggers correctly block and roll back invalid 
+operations with an appropriate error message.
