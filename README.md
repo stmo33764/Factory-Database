@@ -1,5 +1,5 @@
 # Factory-Database
-Relational database system for managing engineer schedules, machine operations, and payroll calculations. Includes user-defined functions, stored procedures, triggers, and a security controls GUI built in Python.
+Relational database system for managing engineer schedules, machine operations, and payroll calculations. Includes user-defined functions, stored procedures, triggers, security controls, and a GUI built in Python.
 
 ## Database Schema
 ![ERD](screenshots/erdFactory.png)
@@ -100,3 +100,51 @@ one associated with its machine.
 All three test cases intentionally attempt rule violations to 
 confirm both triggers correctly block and roll back invalid 
 operations with an appropriate error message.
+
+### sec1 — Database User and Role Assignment
+
+Creates a SQL Server authenticated login g1 and database user u1, 
+then assigns u1 to the db_owner fixed database role making them 
+a co-owner of the Factory database. All tests run inside a 
+transaction that rolls back on completion leaving the database 
+unchanged after verification.
+
+![sec1 Role](screenshots/sec1_role.png)
+
+u1 is confirmed as a member of the db_owner role, granting 
+full co-owner privileges over the Factory database.
+
+![sec1 Permissions](screenshots/sec1_perms.png)
+
+All six co-owner permission tests executed successfully as u1:
+- Test 1: Created a new table
+- Test 2: Inserted data
+- Test 3: Updated data
+- Test 4: Deleted a row
+- Test 5: Dropped the table
+- Test 6: Created and dropped a new user
+
+Transaction rolled back after testing to preserve database state.
+
+### sec2 — Restricted Database User
+
+Creates login g2 and user u2 with limited database access.
+u2 can read all tables except Engineers and PayRate, can 
+access engineer income data through udf2, and is permanently 
+denied all data manipulation regardless of future role changes.
+
+![sec2 Results](screenshots/sec2_results.png)
+
+u2 successfully reads Machines and accesses udf2 for engineer
+income data while being denied direct access to sensitive tables.
+
+![sec2 Messages](screenshots/sec2_messages.png)
+
+All five permission tests confirm correct access controls:
+Engineers and PayRate reads denied, Machines read permitted,
+udf2 accessible, and INSERT permanently blocked.
+
+Note: The null warning on udf2 is expected behavior. SQL Server 
+flags the NULL value before ISNULL converts it to zero for 
+engineers with no scheduled machines. The result is handled 
+correctly as shown in the output.
