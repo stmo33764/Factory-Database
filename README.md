@@ -148,3 +148,50 @@ Note: The null warning on udf2 is expected behavior. SQL Server
 flags the NULL value before ISNULL converts it to zero for 
 engineers with no scheduled machines. The result is handled 
 correctly as shown in the output.
+
+## GUI — Factory Security Demo
+
+A Python tkinter application demonstrating SQL injection 
+vulnerabilities and secure coding practices. Ran locally 
+against the Factory database built in this project. There is a setup script for the initial connection to the SQL Database, 
+as well as the users table and the creation of sp3. Then a guiinject.py with the main application login and sp3 usage.
+
+**Built with:** Python, tkinter, pyodbc, SQL
+
+**Files:**
+- `setup.sql` — initializes the Users table, seeds login 
+  credentials, and creates SP3
+- `guiinject.py` — main application containing the login 
+  page and SP3 dashboard
+
+### Application Flow
+
+**1. Login Page**
+![Login Page](screenshots/GUILogin.png)
+
+Two login paths are available: a vulnerable login using 
+string concatenation and a secure login using parameterized 
+queries. SQL injection hints are displayed to demonstrate 
+the attack surface.
+
+**2. SQL Injection — Catastrophic Result**
+![Database Destroyed](screenshots/GuiDestroy.png)
+
+The vulnerable login accepts a DROP TABLE payload through 
+string concatenation, demonstrating how unsanitized input 
+can result in catastrophic data loss.
+
+**3. Secure Login — Security Measures**
+
+![Security Measures](screenshots/GUISec.png)
+
+Upon successful secure login a dialog displays the security 
+measures in place. A vulnerable attempt, such as ' OR '1'='1'--,
+will not work since these measures are in place.
+
+**4. Dashboard — SP3 Results**
+![Dashboard](screenshots/GUIResults.png)
+
+After successful authentication the dashboard executes SP3 
+to display mentor information for the engineer assigned to 
+the highest value machine. 
